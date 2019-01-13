@@ -294,6 +294,7 @@ def blending_images(base_image, alpha_figure, offset_position, rotation_angle, m
                 and the ordinate (vertical axis) is the second value designating the y-direction.
             rotation_angle: the angle rotated of figure image.
                 the positive value means anti-clockwise rotation.
+            model_type: two type blending model 'alpha_blending' (faster) and 'poisson_blending' (better).
 
         Returns:
             A blended image.
@@ -322,7 +323,7 @@ if __name__ == '__main__':
     alpha_figure = cv.imread('../image_case/figure_image.jpg', cv.IMREAD_UNCHANGED)
     print(alpha_figure.shape)
     print("rotate figure RGBA image")
-    rotation_figure = rotate(alpha_figure, rotation_angle=90)
+    rotation_figure = rotate(alpha_figure, rotation_angle=45)
     print(rotation_figure.shape)
     # transparency has no use in computer-vision, so imshow() just drops the alpha channel
     cv.imshow('image', rotation_figure)
@@ -333,6 +334,9 @@ if __name__ == '__main__':
                                                         alpha_figure=rotation_figure,
                                                         offset_position=(400, 500))
     print(alpha_mask.shape)
+    cv.imshow('image', alpha_mask)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
     print("alpha blending")
     blended_by_alpha = alpha_blending(base_image, alpha_mask)
     # cv.imwrite('/Users/zezzhang/Workspace/poisson_blending/image_case/quick_out.jpg', blended_by_alpha)
@@ -354,6 +358,4 @@ if __name__ == '__main__':
     cv.imshow('image', blended)
     cv.waitKey(0)
     cv.destroyAllWindows()
-
-
 
