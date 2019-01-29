@@ -209,8 +209,8 @@ def poisson_RGB_blending(target, source, mask, result, figure_position, region=1
                 flag_mask = False
                 if mask[y, x] > 0:
                     region_points = [
-                        (min(x + region, base_w), y), (max(x - region, 0), y),
-                        (x, min(y + region, base_h)), (x, max(y - region, 0))
+                        (min(x + region, base_w - 1), y), (max(x - region, 0), y),
+                        (x, min(y + region, base_h - 1)), (x, max(y - region, 0))
                     ]
                     flag_mask = any([mask[e_y, e_x] == 0 for (e_x, e_y) in region_points])
                 if flag_mask:
@@ -223,7 +223,10 @@ def poisson_RGB_blending(target, source, mask, result, figure_position, region=1
                         sum_vpq = 0
                         sum_boundary = 0
                         for (k_x, k_y) in neigbors:
-                            flag_omega = k_y >= 0 & k_y <= base_h & k_x >= 0 & k_x<= base_w & mask[k_y, k_x] > 0
+                            if k_y < 0 or k_y > base_h - 1 or k_x < 0 or k_x > base_w - 1:
+                                # neigbors does not exist
+                                continue
+                            flag_omega = mask[k_y, k_x] > 0
                             if flag_omega:
                                 # inside omega
                                 sum_fq = sum_fq + result[k_y, k_x, rgb]
@@ -332,7 +335,7 @@ if __name__ == '__main__':
     print("alpha mask generation")
     alpha_mask, figure_position = gen_alpha_mask_figure(base_shape=base_image.shape[:2],
                                                         alpha_figure=rotation_figure,
-                                                        offset_position=(400, 500))
+                                                        offset_position=(800, 900))
     print(alpha_mask.shape)
     cv.imshow('image', alpha_mask)
     cv.waitKey(0)
